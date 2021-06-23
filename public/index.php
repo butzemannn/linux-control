@@ -5,6 +5,6 @@
         <?php include '../templates/buttons.php';?>
     </head>
     <body>
-
+        <a href="?run=true">Drücke mich!</a>
     </body>
 </html>
