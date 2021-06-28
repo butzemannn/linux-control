@@ -9,6 +9,7 @@ class ListenSocket(object):
         """
         Set up port 
         """
+        # TODO: Add selector from selectors
         self.host = host
         self.port = port
 

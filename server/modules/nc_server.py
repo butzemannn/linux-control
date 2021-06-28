@@ -2,9 +2,9 @@
 
 import socket
 import threading
+from queue import Queue
 
 from listen_socket import ListenSocket
-from connection_socket import ConnectionSocket
 from command_execute import CommandExecute
 
 
@@ -12,6 +12,8 @@ class NcServer(object):
 
     def __init__(self):
         self.lsocket = ListenSocket()
+        self.commexec = CommandExecute
+        self.queue = Queue
 
     def setup(self):
         pass
@@ -23,4 +25,5 @@ class NcServer(object):
         # 4. Parse message from connection (in thread)
         # 5. Put parsed command into queue to be executed
         # 6. Execute command from queue -> run in separate class with its own Thread
-        pass
+        conn, addr = self.lsocket.accept()
+
