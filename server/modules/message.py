@@ -1,5 +1,6 @@
 #!/usr/bin/env python3
 import io
+import selectors
 import socket
 import struct
 import json
@@ -8,9 +9,10 @@ from queue import Queue
 
 class Message(object):
 
-    def __init__(self, sock: socket.SocketIO, queue: Queue):
+    def __init__(self, sock: socket.SocketIO, queue: Queue, addr):
         self.sock = sock
         self.queue = queue
+        self.addr = addr
 
         self._recv_buffer = b''
         self._send_buffer = b''
@@ -28,13 +30,11 @@ class Message(object):
         else:
             if data:
                 self._recv_buffer += data
-
             else:
                 raise RuntimeError("Peer closed connection.")
 
     def _process_header(self):
         headlen = 2
-
         if len(self._recv_buffer) >= headlen:
             self._request_len = struct.unpack(
                 ">H", self._recv_buffer[:headlen]
@@ -66,14 +66,18 @@ class Message(object):
 
     def read(self):
         self._read()
-
         if self._request_len is None:
             self._process_header()
-
         else:
             self._process_request()
             if self.request is not None:
                 self.queue_request()
 
     def write(self):
-        raise NotImplementedError("This function is not implemented.")
+        raise NotImplementedError("Server send functionality is not implemented.")
+
+    def process_events(self, mask):
+        if mask & selectors.EVENT_READ:
+            self.read()
+        if mask & selectors.EVENT_WRITEN:
+            self.write()
