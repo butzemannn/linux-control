@@ -4,8 +4,8 @@ import socket
 import threading
 from queue import Queue
 
-from worker import Worker
-from message import Message
+from server.modules.worker import Worker
+from server.modules.message import Message
 
 
 class NcServer(object):
@@ -14,6 +14,7 @@ class NcServer(object):
         self.queue = Queue()
         self.sel = selectors.DefaultSelector()
         self._sentinel = object()
+        self._exit = False
 
         self.worker = Worker(self.queue, self._sentinel)
         self.thread = threading.Thread(target=self.worker.run)
@@ -55,6 +56,7 @@ class NcServer(object):
             self.close()
 
     def close(self):
+        self._exit = True
         self.sel.close()
         self.lsock.close()
 

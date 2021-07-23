@@ -79,5 +79,5 @@ class Message(object):
     def process_events(self, mask):
         if mask & selectors.EVENT_READ:
             self.read()
-        if mask & selectors.EVENT_WRITEN:
+        if mask & selectors.EVENT_WRITE:
             self.write()

@@ -16,7 +16,7 @@ commands = {
 class Worker(object):
 
     def __init__(self, queue: Queue, _sentinel: object):
-        # TODO: correct queue init
+        # TODO: add positive response for correct commands
         self.queue = queue
         self._sentinel = _sentinel
 
@@ -26,10 +26,8 @@ class Worker(object):
     def parse_command(self, command: str):
         try:
             func = self.commands.get(command)
-
         except ValueError:
             raise ValueError(f"Parsed command {command} not found")
-
         return func
 
     def start(self):
