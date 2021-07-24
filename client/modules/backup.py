@@ -12,5 +12,6 @@ class Backup(object):
 
     def backup(self):
         """Run backup job on Linux with rsync."""
-        pass
+        with self.conn_wrapper as conn:
+            conn.send_request("start_vm")
 

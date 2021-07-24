@@ -21,3 +21,7 @@ class TestNcServer(TestCase):
             ncserver.close()
         except:
             self.fail("Server close failed.")
+
+    def test_run(self):
+        ncserver = NcServer()
+        ncserver.run()

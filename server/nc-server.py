@@ -2,6 +2,9 @@
 
 import argparse
 
+from server.modules.ncserver import NcServer
+
+
 def setup_args():
     parser = argparse.ArgumentParser(description="The NAS-Control server.")
 
@@ -11,5 +14,7 @@ def setup_args():
 
 
 if __name__ == '__main__':
-    parser = setup_args()
-    args = parser.parse_args()
+    #parser = setup_args()
+    #args = parser.parse_args()
+    server = NcServer()
+    server.run()

@@ -8,15 +8,22 @@ from connection import Connection
 
 
 class ConnectionWrapper(object):
+    """
+    Creates a connection to the server on which commands then can be sent. Essential steps for this
+    wrapper are to check for availability of the host as well as the socket.
+    """
 
     def __init__(self):
         # TODO: move to config file (or use DNS)
         self.host_mac = "18:C0:4D:92:92:25"
-        self.host_ip = "192.168.178.22"
+        #self.host_ip = "192.168.178.22"
+        # self.host_mac = "18:C0:4D:92:92:25"
+        self.host_ip = "127.0.0.1"
         # TODO: verify Port
         self.host_port = 65432
 
         self.services = SimpleNamespace(**read_services())
+        self.connection = None
 
     def is_host_up(self, tries: int = 1) -> bool:
         """
@@ -27,6 +34,7 @@ class ConnectionWrapper(object):
         response = os.system(f"ping -c {tries} {self.host_ip}")
         if response == 0:
             return True
+
         return False
 
     def wake_host(self, wait_online: bool = False, timeout: int = 60):
@@ -50,39 +58,47 @@ class ConnectionWrapper(object):
                 raise ConnectionError("Host ping timed out. Host unreachable.")
 
     def shutdown_host(self):
-        """Shutdowns the host."""
+        """Shuts down the host."""
         raise NotImplementedError("This function is currently not implemented.")
 
-    def is_socket_available(self) -> bool:
+    def is_socket_up(self) -> bool:
         """Checks if socket is available for connection"""
         # TODO: implement
         raise NotImplementedError("This function is currently not implemented.")
 
-    def connect_to_socket(self) -> Connection:
+    def create_connection(self) -> Connection:
         """Connects to the host socket."""
         # TODO: implement
-        raise NotImplementedError("This function is currently not implemented.")
+        if self.connection is not None:
+            raise ConnectionError("There already is a connection.")
 
-    def disconnect_from_socket(self):
+        self.connection = Connection(self.host_ip, self.host_port)
+        return self.connection
+
+    def remove_connection(self):
         """Disconnect from the host's socket."""
-        raise NotImplementedError("This function is currently not implemented.")
+        if self.connection is None:
+            raise ConnectionError("Currently no connection available to close.")
+
+        self.connection.disconnect()
 
     def connect(self) -> Connection:
         """Connect to host and to the socket."""
         if not self.is_host_up():
             self.wake_host(wait_online=True, timeout=60)
 
-        if self.is_socket_available():
-            return self.connect_to_socket()
+        if self.is_socket_up():
+            self.connection = self.create_connection()
+            return self.connection
         else:
-            raise RuntimeError("Cannot connect to socket.")
+            raise ConnectionError("Cannot connect to socket.")
 
     def disconnect(self, shutdown: bool = False):
-        self.disconnect_from_socket()
+        self.remove_connection()
         if shutdown:
             self.shutdown_host()
 
-    def __enter__(self, shutdown: bool = False):
+    def __enter__(self, shutdown: bool = False) -> Connection:
         self.shutdown = shutdown
         return self.connect()
 
