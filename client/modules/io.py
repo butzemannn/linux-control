@@ -1,5 +1,3 @@
-#!/usr/bin/env python3
-
 def read_services() -> dict:
     """
     Reads the services file in conf/services containing the service name and the corresponding container id.

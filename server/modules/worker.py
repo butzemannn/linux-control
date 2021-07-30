@@ -1,16 +1,6 @@
-#!/usr/bin/env python3
+import os
 import sys
 from queue import Queue
-
-
-container = {
-    "overleaf": 107,
-}
-
-commands = {
-    "start": "start",
-    "stop": "stop",
-}
 
 
 class Worker(object):
@@ -20,29 +10,26 @@ class Worker(object):
         self.queue = queue
         self._sentinel = _sentinel
 
-        self.commands = commands
-        self.container = container
+    def start_vm(self, id: str):
+        os.system(f"qm start {id}")
 
-    def parse_command(self, command: str):
-        try:
-            func = self.commands.get(command)
-        except ValueError:
-            raise ValueError(f"Parsed command {command} not found")
-        return func
+    def shutdown_vm(self, id: str):
+        os.system(f"qm shutdown {id}")
 
-    def start(self):
-        pass
-
-    def stop(self):
-        pass
+    def test(self, arg1, arg2):
+        print(f"arg1: {arg1}, arg2: {arg2}")
 
     def process_request(self, request: str):
         if request is self._sentinel:
             sys.exit()
 
-        func_str = self.parse_command(request)
-        func = getattr(self, self.commands[func_str])
-        func()
+        request = request.split(" ")
+        try:
+            func = getattr(self, request[0])
+        except Exception:
+            raise RuntimeError(f"Command {request[0]} not found.")
+
+        func(*request[1:])
 
     def run(self):
         request = self.queue.get()

@@ -1,10 +1,10 @@
-#!/usr/bin/env python3
-import os
+import subprocess
+from time import time, sleep
 from types import SimpleNamespace
 from wakeonlan import send_magic_packet
 
 from client.modules.io import read_services
-from connection import Connection
+from client.modules.connection import Connection
 
 
 class ConnectionWrapper(object):
@@ -16,13 +16,13 @@ class ConnectionWrapper(object):
     def __init__(self):
         # TODO: move to config file (or use DNS)
         self.host_mac = "18:C0:4D:92:92:25"
-        #self.host_ip = "192.168.178.22"
+        self.host_ip = "192.168.178.22"
         # self.host_mac = "18:C0:4D:92:92:25"
-        self.host_ip = "127.0.0.1"
+        #self.host_ip = "127.0.0.1"
         # TODO: verify Port
         self.host_port = 65432
 
-        self.services = SimpleNamespace(**read_services())
+        #self.services = SimpleNamespace(**read_services())
         self.connection = None
 
     def is_host_up(self, tries: int = 1) -> bool:
@@ -30,12 +30,29 @@ class ConnectionWrapper(object):
         Checks if host is available
 
         :returns: Bool if host is currently online.
+        :raises: RuntimeError when host is unreachable
         """
-        response = os.system(f"ping -c {tries} {self.host_ip}")
+        response = subprocess.call(["ping", "-c", str(tries), self.host_ip], stdout=subprocess.DEVNULL)
         if response == 0:
             return True
 
         return False
+
+    def wait_for_ping(self, host_ip, timeout: int = 60):
+        time_start = time()
+        online = False
+        while (time() - time_start) < timeout:
+            if online:
+                return
+            try:
+                subprocess.check_call(['ping', '-c', '2', host_ip], stdout=subprocess.DEVNULL)
+            except subprocess.CalledProcessError:
+                pass
+            else:
+                online = True
+            sleep(0.2)
+        else:
+            raise RuntimeError("Host remains unreachable.")
 
     def wake_host(self, wait_online: bool = False, timeout: int = 60):
         """
@@ -53,9 +70,9 @@ class ConnectionWrapper(object):
 
         send_magic_packet(self.host_mac)
         if wait_online:
-            response = os.system(f"ping -c 3 -w {timeout} {self.host_ip}")
-            if response != 0:
-                raise ConnectionError("Host ping timed out. Host unreachable.")
+            print("Waiting for host...")
+            self.wait_for_ping(self.host_ip, timeout)
+            print("Host online!")
 
     def shutdown_host(self):
         """Shuts down the host."""
@@ -104,6 +121,11 @@ class ConnectionWrapper(object):
 
     def __exit__(self, exc_type, exc_val, exc_tb):
         self.disconnect(self.shutdown)
+
+
+if __name__ == "__main__":
+    cw = ConnectionWrapper()
+    cw.wake_host(wait_online=True)
 
 
 

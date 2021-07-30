@@ -1,5 +1,3 @@
-#!/usr/bin/env python3
-
 import argparse
 
 from server.modules.ncserver import NcServer

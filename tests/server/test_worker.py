@@ -1,5 +1,7 @@
 from unittest import TestCase
 
+from server.modules.worker import Worker
+
 
 class TestWorker(TestCase):
     def test_parse_command(self):
@@ -12,7 +14,8 @@ class TestWorker(TestCase):
         self.fail()
 
     def test_process_request(self):
-        self.fail()
+        worker = Worker(None, object)
+        worker.process_request("test 123 456")
 
     def test_run(self):
         self.fail()
