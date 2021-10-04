@@ -1,2 +1,2 @@
-# nas-control
-A Website to remote control a distant server.
+# linux-control
+A home assistant integration to control a Linux host.

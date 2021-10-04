@@ -1,10 +1,10 @@
 import argparse
 
-from server.modules.ncserver import NcServer
+from remote.modules.lcremote import LcRemote
 
 
 def setup_args():
-    parser = argparse.ArgumentParser(description="The NAS-Control server.")
+    parser = argparse.ArgumentParser(description="The NAS-Control remote.")
 
     parser.add_argument()
 
@@ -14,5 +14,5 @@ def setup_args():
 if __name__ == '__main__':
     #parser = setup_args()
     #args = parser.parse_args()
-    server = NcServer()
+    server = LcRemote()
     server.run()

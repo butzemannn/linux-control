@@ -1,7 +1,7 @@
 import struct
 from unittest import TestCase
 
-from client.modules.connection import Connection
+from host.modules.connection import Connection
 
 
 class TestConnection(TestCase):

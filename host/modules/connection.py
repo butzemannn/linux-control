@@ -27,11 +27,12 @@ class Connection(object):
         return header + request
 
     def encode_header(self, header) -> bytes:
+        """Encodes the header to be added to message"""
         return struct.pack(">H", header)
 
     def send_request(self, request: str):
         """
-        Sending a command as str to the server
+        Sending a command as str to the remote
         :param request:
         :return:
         """

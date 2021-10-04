@@ -1,13 +1,13 @@
 import socket
 from unittest import TestCase
 
-from server.modules.ncserver import NcServer
+from remote.modules.lcremote import LcRemote
 
 
 class TestNcServer(TestCase):
 
     def test_setup(self):
-        ncserver = NcServer()
+        ncserver = LcRemote()
         with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
             self.assertRaises(ConnectionRefusedError, s.connect, ("126.0.0.1", 65432))
             ncserver.setup()
@@ -23,5 +23,5 @@ class TestNcServer(TestCase):
             self.fail("Server close failed.")
 
     def test_run(self):
-        ncserver = NcServer()
+        ncserver = LcRemote()
         ncserver.run()

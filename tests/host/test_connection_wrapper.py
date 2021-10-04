@@ -1,6 +1,6 @@
 import unittest
 
-from client.modules.connection_wrapper import ConnectionWrapper
+from host.modules.connection_wrapper import ConnectionWrapper
 
 
 class TestConnectionWrapper(unittest.TestCase):

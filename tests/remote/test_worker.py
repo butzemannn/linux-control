@@ -1,6 +1,6 @@
 from unittest import TestCase
 
-from server.modules.worker import Worker
+from remote.modules.worker import Worker
 
 
 class TestWorker(TestCase):

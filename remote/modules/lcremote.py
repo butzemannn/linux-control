@@ -3,11 +3,11 @@ import socket
 import threading
 from queue import Queue
 
-from server.modules.worker import Worker
-from server.modules.message import Message
+from remote.modules.worker import Worker
+from remote.modules.message import Message
 
 
-class NcServer(object):
+class LcRemote(object):
 
     def __init__(self):
         self.queue = Queue()
@@ -38,7 +38,7 @@ class NcServer(object):
 
     def run(self):
         try:
-            print("Start server...")
+            print("Start remote...")
             self.setup()
             # TODO: implement way to exit loop
             while True:

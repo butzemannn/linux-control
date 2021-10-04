@@ -10,12 +10,6 @@ class Worker(object):
         self.queue = queue
         self._sentinel = _sentinel
 
-    def start_vm(self, id: str):
-        os.system(f"qm start {id}")
-
-    def shutdown_vm(self, id: str):
-        os.system(f"qm shutdown {id}")
-
     def test(self, arg1, arg2):
         print(f"arg1: {arg1}, arg2: {arg2}")
 

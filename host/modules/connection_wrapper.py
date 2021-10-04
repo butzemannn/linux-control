@@ -3,13 +3,12 @@ from time import time, sleep
 from types import SimpleNamespace
 from wakeonlan import send_magic_packet
 
-from client.modules.io import read_services
-from client.modules.connection import Connection
+from host.modules.connection import Connection
 
 
 class ConnectionWrapper(object):
     """
-    Creates a connection to the server on which commands then can be sent. Essential steps for this
+    Creates a connection to the remote on which commands then can be sent. Essential steps for this
     wrapper are to check for availability of the host as well as the socket.
     """
 
@@ -56,7 +55,7 @@ class ConnectionWrapper(object):
 
     def wake_host(self, wait_online: bool = False, timeout: int = 60):
         """
-        Wakes up the host with a WOL magic package. Optionally waits until the server is online.
+        Wakes up the host with a WOL magic package. Optionally waits until the remote is online.
         Times out if waiting longer than timeout.
 
         :param wait_online: Bool which defines, if the function waits until the host is online.
